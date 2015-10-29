@@ -1,0 +1,73 @@
+From 64d7fa396d0dc69f722905ff824fa0c120e1c3f0 Mon Sep 17 00:00:00 2001
+From: Alexander Smirnov <asmirnov@ilbers.de>
+Date: Mon, 16 Feb 2015 14:37:01 +0400
+Subject: [PATCH 1/4] arm/arch_timer: force to use virtual timer
+
+ARM virtualization extension introduces new class of system
+counter - virtual timer. This timer should be used by guest
+operating systems running under hypervisor.
+
+Current kernel for Banana Pi is too old and there is no support
+for ARM virtual counter, while it's already introdueced in mainline.
+
+This patch switches kernel to use virtual ARM timer instead of physical.
+
+Signed-off-by: Alexander Smirnov <asmirnov@ilbers.de>
+---
+ arch/arm/kernel/arch_timer.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm/kernel/arch_timer.c b/arch/arm/kernel/arch_timer.c
+index 019af2b..e2ebe6ba 100644
+--- a/arch/arm/kernel/arch_timer.c
++++ b/arch/arm/kernel/arch_timer.c
+@@ -27,7 +27,7 @@
+ #include <asm/sched_clock.h>
+ 
+ static unsigned long arch_timer_rate = 24000000;
+-static int arch_timer_ppi = 29;
++static int arch_timer_ppi = 27;
+ static int arch_timer_ppi2 = 30;
+ 
+ static struct clock_event_device __percpu **arch_timer_evt;
+@@ -48,10 +48,10 @@ static void arch_timer_reg_write(int reg, u32 val)
+ {
+ 	switch (reg) {
+ 	case ARCH_TIMER_REG_CTRL:
+-		asm volatile("mcr p15, 0, %0, c14, c2, 1" : : "r" (val));
++		asm volatile("mcr p15, 0, %0, c14, c3, 1" : : "r" (val));
+ 		break;
+ 	case ARCH_TIMER_REG_TVAL:
+-		asm volatile("mcr p15, 0, %0, c14, c2, 0" : : "r" (val));
++		asm volatile("mcr p15, 0, %0, c14, c3, 0" : : "r" (val));
+ 		break;
+ 	}
+ 
+@@ -64,13 +64,13 @@ static u32 arch_timer_reg_read(int reg)
+ 
+ 	switch (reg) {
+ 	case ARCH_TIMER_REG_CTRL:
+-		asm volatile("mrc p15, 0, %0, c14, c2, 1" : "=r" (val));
++		asm volatile("mrc p15, 0, %0, c14, c3, 1" : "=r" (val));
+ 		break;
+ 	case ARCH_TIMER_REG_FREQ:
+ 		asm volatile("mrc p15, 0, %0, c14, c0, 0" : "=r" (val));
+ 		break;
+ 	case ARCH_TIMER_REG_TVAL:
+-		asm volatile("mrc p15, 0, %0, c14, c2, 0" : "=r" (val));
++		asm volatile("mrc p15, 0, %0, c14, c3, 0" : "=r" (val));
+ 		break;
+ 	default:
+ 		BUG();
+@@ -192,7 +192,7 @@ static inline cycle_t arch_counter_get_cntpct(void)
+ {
+ 	u64 cval;
+ 
+-	asm volatile("mrrc p15, 0, %Q0, %R0, c14" : "=r" (cval));
++	asm volatile("mrrc p15, 1, %Q0, %R0, c14" : "=r" (cval));
+ 
+ 	return cval;
+ }
+-- 
+1.9.3
+

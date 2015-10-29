@@ -1,0 +1,62 @@
+From 13fa231713d5676e6cf9e644cb2e1c0bf407f2a8 Mon Sep 17 00:00:00 2001
+From: Alexander Smirnov <asmirnov@ilbers.de>
+Date: Thu, 21 May 2015 12:09:48 +0300
+Subject: [PATCH 2/4] sunxi/smp: disable SMP startup
+
+During boot-time, sunxi kernel performs a power-cycle for  all the CPU
+cores. And there is no way to set the number of cores in configuration.
+
+Instead of trapping CPU Configuration Registers in hypervisor, this patch
+just disables hard reset of secondary CPUs.
+
+Signed-off-by: Alexander Smirnov <asmirnov@ilbers.de>
+---
+ arch/arm/mach-sun7i/platsmp.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-sun7i/platsmp.c b/arch/arm/mach-sun7i/platsmp.c
+index b74bbff..cb7572e 100644
+--- a/arch/arm/mach-sun7i/platsmp.c
++++ b/arch/arm/mach-sun7i/platsmp.c
+@@ -38,6 +38,15 @@ void __cpuinit enable_aw_cpu(int cpu)
+     paddr = virt_to_phys(sun7i_secondary_startup);
+     writel(paddr, IO_ADDRESS(SW_PA_CPUCFG_IO_BASE) + AW_CPUCFG_P_REG0);
+ 
++    /*   The code below performs hard reset of secondary physical CPU cores,
++     * but guest operating systems shouldn't do this - otherwise the hypervisor
++     * will lose control on this core. Also, before start Linux, Mango already
++     * woken up all the CPU cores, so there is no need to reset them again.
++     *
++     *   For safe implementations - Mango should filter out the access to these
++     * registers, but in this kit such things are left for demonstration needs. 
++     */
++#if 0
+     /* step1: Assert nCOREPORESET LOW and hold L1RSTDISABLE LOW.
+               Ensure DBGPWRDUP is held LOW to prevent any external
+               debug access to the processor.
+@@ -78,6 +87,7 @@ void __cpuinit enable_aw_cpu(int cpu)
+     pwr_reg = readl(IO_ADDRESS(SW_PA_CPUCFG_IO_BASE) + AW_CPUCFG_DBGCTL1);
+     pwr_reg |= (1<<cpu);
+     writel(pwr_reg, IO_ADDRESS(SW_PA_CPUCFG_IO_BASE) + AW_CPUCFG_DBGCTL1);
++#endif
+ }
+ 
+ void __init smp_init_cpus(void)
+@@ -87,10 +97,13 @@ void __init smp_init_cpus(void)
+ 
+ 	/* HDG: we do not use scu_get_core_count() here as that does not
+ 	   work on the A20 ? */
+-
++#if 0
+ 	/* Read current CP15 Cache Size ID Register */
+ 	asm volatile ("mrc p15, 1, %0, c9, c0, 2" : "=r" (ncores));
+ 	ncores = ((ncores >> 24) & 0x3) + 1;
++#else
++	ncores = 2;
++#endif
+ 
+     pr_debug("[%s] ncores=%d\n", __FUNCTION__, ncores);
+ 
+-- 
+1.9.3
+
