@@ -15,8 +15,6 @@ SRC_URI = "\
     git://github.com/ilbers/mango-apps.git;protocol=git;branch=master \
     file://mango                                                      \
 "
-SRCREV = "4fd527585b0c05fe154c00defcd24f8368447797"
-
 S = "${WORKDIR}/git"
 
 inherit autotools deploy

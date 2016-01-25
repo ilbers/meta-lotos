@@ -13,7 +13,6 @@ PV = "8.2.1"
 PR = "v1.0-mango"
 
 SRC_URI = "git://github.com/ilbers/freertos.git;protocol=git;branch=mango"
-SRCREV = "576cec62658cfae07b8b0d9f5de3a018a00615d6"
 
 S = "${WORKDIR}/git"
 

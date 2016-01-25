@@ -14,6 +14,5 @@ PV = "v1.0"
 inherit module
 
 SRC_URI = "git://github.com/ilbers/linux-modules.git;protocol=git;branch=master"
-SRCREV = "fc04ae69bd5e136d22910040f683905511386e61"
 
 S = "${WORKDIR}/git"
