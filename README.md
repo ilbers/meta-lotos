@@ -54,24 +54,28 @@ To build LotOS framework for Banana Pi, the following steps has to be done:
 
         $ git clone git://git.yoctoproject.org/poky.git
 
-2. Get meta-sunxi layer:
+2. Checkout supported poky revision:
 
         $ cd poky
+        $ git checkout 221d864042658daa054281aab439b44d54fe94d7
+
+3. Get meta-sunxi layer:
+
         $ git clone https://github.com/linux-sunxi/meta-sunxi.git
 
-3. Copy 'meta-lotos' to 'poky' folder
+4. Copy 'meta-lotos' to 'poky' folder
 
-4. Setup build configuration:
+5. Setup build configuration:
 
         $ source oe-init-build-env build-folder
 
     Where 'build-folder' is any folder where you want to start build.
 
-5. Edit 'conf/local.conf' in your build folder, line 37:
+6. Edit 'conf/local.conf' in your build folder, line 37:
 
         MACHINE ??= "bananapi-lotos"
 
-6. Edit 'conf/bblayers.conf' in your build folder and add overlays, line 8:
+7. Edit 'conf/bblayers.conf' in your build folder and add overlays, line 8:
 
         BBLAYERS ?= " \
             /opt/dev/yocto/poky/meta \
@@ -85,7 +89,7 @@ To build LotOS framework for Banana Pi, the following steps has to be done:
 
     NOTE: replace '/opt/dev/yocto' by the path to your poky tree.
 
-7. Start build
+8. Start build
 
       $ bitbake core-image-sato
 
@@ -100,24 +104,28 @@ To build LotOS framework for Arndale, the following steps has to be done:
 
         $ git clone git://git.yoctoproject.org/poky.git
 
-2. Get meta-exynos layer:
+2. Checkout supported poky revision:
 
         $ cd poky
+        $ git checkout 221d864042658daa054281aab439b44d54fe94d7
+
+3. Get meta-exynos layer:
+
         $ git clone https://github.com/slimlogic/meta-exynos.git
 
-3. Copy 'meta-lotos' to 'poky' folder
+4. Copy 'meta-lotos' to 'poky' folder
 
-4. Setup build configuration:
+5. Setup build configuration:
 
         $ source oe-init-build-env build-folder
 
     Where 'build-folder' is any folder where you want to start build.
 
-5. Edit 'conf/local.conf' in your build folder, line 37:
+6. Edit 'conf/local.conf' in your build folder, line 37:
 
         MACHINE ??= "arndale-lotos"
 
-6. Edit 'conf/bblayers.conf' in your build folder and add overlays, line 8:
+7. Edit 'conf/bblayers.conf' in your build folder and add overlays, line 8:
 
         BBLAYERS ?= " \
             /opt/dev/yocto/poky/meta \
@@ -131,7 +139,7 @@ To build LotOS framework for Arndale, the following steps has to be done:
 
     NOTE: replace '/opt/dev/yocto' by the path to your poky tree.
 
-7. Start build
+8. Start build
 
         $ bitbake core-image-base
 
