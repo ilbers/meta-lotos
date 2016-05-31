@@ -2,7 +2,7 @@
 #
 # This package is a part of LotOS framework.
 #
-# Copyright (c) 2015 ilbers GmbH
+# Copyright (c) 2015-2016 ilbers GmbH
 
 DESCRIPTION = "Utils for Mango hypervisor configuration"
 
@@ -21,7 +21,7 @@ SECTION = "devel"
 inherit autotools deploy native
 
 do_deploy() {
-	${B}/mng2bin/mng2bin ${S}/mng2bin/configs/${BOARD_TYPE}.mng ${S}/config.bin
+	${B}/mng2bin/mng2bin ${S}/mng2bin/configs/${BOARD_TYPE}_2parts.mng ${S}/config.bin
 	install -m 0644 ${S}/config.bin ${DEPLOYDIR}
 }
 

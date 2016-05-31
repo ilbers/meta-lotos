@@ -1,7 +1,7 @@
 #!/bin/sh
 # Start/stop mango hypervisor interface
 #
-# Copyright (c) 2015 ilbers GmbH
+# Copyright (c) 2015-2016 ilbers GmbH
 
 
 PATH=/bin:/usr/bin:/sbin:/usr/sbin
@@ -10,7 +10,7 @@ case "$1" in
 start)  echo "Starting Mango hypervisor interface"
 
 	# Load Mango API modules
-	modprobe mango_core
+	modprobe mango_core secure_token="bananapi"
 	modprobe mango_data_channel nr_devs=1
 	modprobe mango_watchdog
 	modprobe mango_net_iface

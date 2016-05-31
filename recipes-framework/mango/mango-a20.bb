@@ -2,7 +2,7 @@
 #
 # This package is a part of LotOS framework.
 #
-# Copyright (c) 2015 ilbers GmbH
+# Copyright (c) 2015-2016 ilbers GmbH
 
 DESCRIPTION = "Mango hypervisor"
 
@@ -10,11 +10,11 @@ DESCRIPTION = "Mango hypervisor"
 LICENSE = "Proprietary"
 LIC_FILES_CHKSUM = "file://license.txt;md5=11b78b1f12411a8c70462b805049c6bf"
 
-PV = "1.3"
+PV = "1.4"
 
 SRC_URI = "http://dl.ilbers.de/dl/mango-${PV}-${SOC_TYPE}.tar.gz"
-SRC_URI[md5sum] = "b3f2e553d0d17351f77d1a2cbba457c4"
-SRC_URI[sha256sum] = "7a728100224bfb748146f236ff798258d56a8905d383ada0b591af65f686c6cc"
+SRC_URI[md5sum] = "9f36c2c663c11a5e6cc2f52121b02998"
+SRC_URI[sha256sum] = "91bc08f5c30461474afe29350538de5ac577ce4f35ba5bad7e0f7ed354d0af17"
 
 S = "${WORKDIR}/mango-${PV}-${SOC_TYPE}"
 

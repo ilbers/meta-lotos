@@ -2,7 +2,7 @@
 #
 # This package is a part of LotOS framework.
 #
-# Copyright (c) 2015 ilbers GmbH
+# Copyright (c) 2015-2016 ilbers GmbH
 
 DESCRIPTION = "FreeRTOS v8.2.1 operating system"
 
