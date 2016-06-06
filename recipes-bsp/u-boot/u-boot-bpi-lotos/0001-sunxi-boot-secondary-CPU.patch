@@ -1,0 +1,146 @@
+From d963b7324c599685374e51af2196bf8085fb4beb Mon Sep 17 00:00:00 2001
+From: Alexander Smirnov <asmirnov@ilbers.de>
+Date: Fri, 3 Jun 2016 16:36:33 +0300
+Subject: [PATCH] sunxi: boot secondary CPU
+
+Boot secondary CPU for A20 SoC in non-secure mode.
+
+U-Boot already contains necessary code to wake up and boot
+secondary CPUs. Instead of duplicating this code in Mango,
+lets wake up all cores in bootloader.
+
+Signed-off-by: Alexander Smirnov <asmirnov@ilbers.de>
+---
+ arch/arm/cpu/armv7/sunxi/Makefile |  4 ++
+ arch/arm/cpu/armv7/sunxi/cpu.c    | 90 +++++++++++++++++++++++++++++++++++++++
+ include/configs/sun7i.h           |  2 +-
+ 3 files changed, 95 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/cpu/armv7/sunxi/cpu.c
+
+diff --git a/arch/arm/cpu/armv7/sunxi/Makefile b/arch/arm/cpu/armv7/sunxi/Makefile
+index 4d2274a..5f457d0 100644
+--- a/arch/arm/cpu/armv7/sunxi/Makefile
++++ b/arch/arm/cpu/armv7/sunxi/Makefile
+@@ -12,6 +12,10 @@ obj-y	+= timer.o
+ obj-$(CONFIG_MACH_SUN6I)	+= tzpc.o
+ obj-$(CONFIG_MACH_SUN8I_H3)	+= tzpc.o
+ 
++ifndef CONFIG_ARMV7_PSCI
++obj-$(CONFIG_MACH_SUN7I)	+= cpu.o
++endif
++
+ ifndef CONFIG_SPL_BUILD
+ ifdef CONFIG_ARMV7_PSCI
+ obj-$(CONFIG_MACH_SUN6I)	+= psci_sun6i.o
+diff --git a/arch/arm/cpu/armv7/sunxi/cpu.c b/arch/arm/cpu/armv7/sunxi/cpu.c
+new file mode 100644
+index 0000000..5a66629
+--- /dev/null
++++ b/arch/arm/cpu/armv7/sunxi/cpu.c
+@@ -0,0 +1,90 @@
++/*
++ * SMP initialization for A20
++ *
++ * Alexander Smirnov <asmirnov@ilbers.de>
++ * Copyright (c) 2014-2016 ilbers GmbH
++ */
++
++#include <common.h>
++#include <asm/io.h>
++
++#if defined(CONFIG_MACH_SUN7I)
++#define NUM_CORES 2
++#else
++#error unsupported SoC
++#endif
++
++#define SUNXI_CPUCFG_BASE	0x01c25c00
++
++#define CPU_RESET_SET   	0
++#define CPU_RESET_CLEAR 	3
++
++#define CPU_STATUS_SMP		(1 << 0)
++#define CPU_STATUS_WFE		(1 << 1)
++#define CPU_STATUS_WFI		(1 << 2)
++
++#define GENERAL_CTRL_NO_L1_RESET_CPU(x)	(1UL << (x))
++#define GENERAL_CTRL_NO_L2_AUTO_RESET	(1UL << 4)
++#define GENERAL_CTRL_L2_RESET_SET	(0UL << 5)
++#define GENERAL_CTRL_L2_RESET_CLEAR	(1UL << 5)
++#define GENERAL_CTRL_CFGSDISABLE	(1UL << 8)
++
++struct sunxi_cpu_ctrl {
++	u32 reset_ctrl;
++	u32 cpu_ctrl;
++	u32 status;
++	u32 _res[13];
++};
++
++struct sunxi_cpucfg {
++	u32 _res1[16];			/* 0x000 */
++	struct sunxi_cpu_ctrl cpu[2];	/* 0x040 */
++	u32 _res2[48];			/* 0x0c0 */
++	u32 _res3;			/* 0x180 */
++	u32 general_ctrl;		/* 0x184 */
++	u32 _res4[2];			/* 0x188 */
++	u32 event_input;		/* 0x190 */
++	u32 _res5[4];			/* 0x194 */
++	u32 boot_addr;			/* 0x1a4 - also known as PRIVATE_REG */
++	u32 _res6[2];			/* 0x1a8 */
++	u32 cpu1_power_clamp;		/* 0x1b0 */
++	u32 cpu1_power_off;		/* 0x1b4 */
++	u32 _res7[10];			/* 0x1b8 */
++	u32 debug0_ctrl;		/* 0x1e0 */
++	u32 debug1_ctrl;		/* 0x1e4 */
++};
++
++void smp_set_core_boot_addr(unsigned long addr, int nr)
++{
++	int i;
++	struct sunxi_cpucfg *cpucfg = (struct sunxi_cpucfg *)SUNXI_CPUCFG_BASE;
++
++	writel((u32)addr, &cpucfg->boot_addr);
++
++	for (i = 1; i < NUM_CORES; i++) {
++		/* Assert CPU reset just in case */
++		writel(CPU_RESET_SET, &cpucfg->cpu[i].reset_ctrl);
++		/* Ensure CPU reset also invalidates L1 caches */
++		clrbits_le32(&cpucfg->general_ctrl,
++			     GENERAL_CTRL_NO_L1_RESET_CPU(i));
++		/* Lock CPU */
++		clrbits_le32(&cpucfg->debug1_ctrl, 1 << i);
++
++		/* Ramp up power to CPU1 */
++		assert(i == 1);
++		u32 j = 0xff << 1;
++		do {
++			j = j >> 1;
++			writel(j, &cpucfg->cpu1_power_clamp);
++		} while (j != 0);
++
++		udelay(10*1000); /* 10ms */
++
++		clrbits_le32(&cpucfg->cpu1_power_off, 1);
++		/* Release CPU reset */
++		writel(CPU_RESET_CLEAR, &cpucfg->cpu[i].reset_ctrl);
++
++		/* Unlock CPU */
++		setbits_le32(&cpucfg->debug1_ctrl, 1 << i);
++	}
++}
+diff --git a/include/configs/sun7i.h b/include/configs/sun7i.h
+index 0dd2902..cbc7098 100644
+--- a/include/configs/sun7i.h
++++ b/include/configs/sun7i.h
+@@ -20,7 +20,7 @@
+ 
+ #define CONFIG_SUNXI_USB_PHYS	3
+ 
+-#define CONFIG_ARMV7_PSCI		1
++#define CONFIG_SMP_PEN_ADDR		0x01c25da4	/* SUNXI_CPUCFG_BASE->PRIVATE_REG */
+ #define CONFIG_ARMV7_SECURE_BASE	SUNXI_SRAM_B_BASE
+ 
+ /*
+-- 
+1.9.3
+
