@@ -6,6 +6,8 @@
 
 DESCRIPTION = "Mango hypervisor"
 
+PROVIDES = "mango"
+
 # Mango hypervisor is a property of ilbers GmbH
 LICENSE = "Proprietary"
 LIC_FILES_CHKSUM = "file://license.txt;md5=11b78b1f12411a8c70462b805049c6bf"

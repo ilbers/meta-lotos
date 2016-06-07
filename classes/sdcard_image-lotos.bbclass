@@ -43,7 +43,7 @@ IMAGE_DEPENDS_sunxi-sdimg += "                    \
                                virtual/bootloader \
                                sunxi-board-fex    \
                                freertos           \
-                               mango-a20          \
+                               mango              \
                                mango-utils        \
                              "
 
