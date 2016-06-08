@@ -15,8 +15,8 @@ LIC_FILES_CHKSUM = "file://license.txt;md5=11b78b1f12411a8c70462b805049c6bf"
 PV = "1.4"
 
 SRC_URI = "http://dl.ilbers.de/dl/mango-${PV}-${SOC_TYPE}.tar.gz"
-SRC_URI[md5sum] = "4f31e3fdd1280288c4dec76aca482f84"
-SRC_URI[sha256sum] = "14c7a72f7efa375edd378101a014acd2de9bf332777de0ed43f87f25362ba9ed"
+SRC_URI[md5sum] = "17b46fdb4d107feca173cc39f990735f"
+SRC_URI[sha256sum] = "8e7fadd1a9c0e3ec4df714a3c8c80fecb4f2c37d901bd9383607e6ca020fdbe2"
 
 S = "${WORKDIR}/mango-${PV}-${SOC_TYPE}"
 

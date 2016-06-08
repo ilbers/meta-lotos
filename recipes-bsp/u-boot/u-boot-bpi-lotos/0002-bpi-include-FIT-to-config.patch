@@ -1,0 +1,33 @@
+From 18e18498c8d8844c036538e52b692f5af4c07e99 Mon Sep 17 00:00:00 2001
+From: Alexander Smirnov <asmirnov@ilbers.de>
+Date: Tue, 7 Jun 2016 13:52:43 +0300
+Subject: [PATCH 2/2] bpi: include FIT to config
+
+Include FIT image support to Bananapi default configuration
+file.
+
+Signed-off-by: Alexander Smirnov <asmirnov@ilbers.de>
+---
+ configs/Bananapi_defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/configs/Bananapi_defconfig b/configs/Bananapi_defconfig
+index fd6b8de..989d7f0 100644
+--- a/configs/Bananapi_defconfig
++++ b/configs/Bananapi_defconfig
+@@ -7,6 +7,7 @@ CONFIG_GMAC_TX_DELAY=3
+ CONFIG_DEFAULT_DEVICE_TREE="sun7i-a20-bananapi"
+ # CONFIG_SYS_MALLOC_CLEAR_ON_INIT is not set
+ CONFIG_SPL=y
++CONFIG_FIT=y
+ CONFIG_SYS_EXTRA_OPTIONS="SUNXI_GMAC,RGMII,MACPWR=SUNXI_GPH(23),AHCI"
+ CONFIG_HUSH_PARSER=y
+ CONFIG_CMD_BOOTZ=y
+@@ -25,3 +26,4 @@ CONFIG_CMD_FS_GENERIC=y
+ CONFIG_NETCONSOLE=y
+ CONFIG_ETH_DESIGNWARE=y
+ CONFIG_USB_EHCI_HCD=y
++CONFIG_SHA1=y
+-- 
+1.9.3
+
