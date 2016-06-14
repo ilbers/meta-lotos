@@ -1,7 +1,7 @@
 meta-lotos
 ==========
 
-Copyright (c) 2015 ilbers GmbH
+Copyright (c) 2015-2016 ilbers GmbH
 
 LotOS framework layer for Yocto project
 
@@ -30,52 +30,67 @@ The LotOS framework build was tested on the following Linux distributions:
  * Fedora 20 (32-bit)
  * Debian 7  (32-bit)
 
-The following build targets were tested:
- * core-image-sato
+Build Targets
+=============
+
+The following build targets are available:
+
+ * core-image-minimal
+
+   Console-based Linux image with minimal set of tools installed.
+
  * core-image-base
 
-NOTE: for some boards the official vendor layer has to be downloaded.
+   Console-based Linux image with typical set of tools installed.
 
-Supported boards
+ * core-image-lotos
+
+   Graphical Linux image with Qt support.
+
+In addition, all the image includes Mango hypervisor extensions.
+
+Supported Boards
 ================
 
 This layer includes ports for the following boards:
 
  * Banana Pi (A20)
 
-This layer is actively developed and new boards will be added soon. For additional information
-about supported platforms please contact ilbers GmbH.
+For more information about supported platforms please contact ilbers GmbH.
+
+Project Documentation
+=====================
+
+For more information about LotOS framework features please refer to the getting
+started guide:
+
+        doc/getting_started.pdf
 
 Banana Pi Getting Started
 =========================
+
+LotOS framework uses *repo* tool simplify project download. If you don't have
+this tool on your host, please follow this [steps](https://source.android.com/source/downloading.html)
+to get it.
+
 To build LotOS framework for Banana Pi, the following steps has to be done:
 
-1. Get Yocto project:
+1. Checkout sources:
 
-        $ git clone git://git.yoctoproject.org/poky.git
+        $ repo init -u https://github.com/ilbers/lotos-manifest.git
+        $ repo sync
 
-2. Checkout supported poky revision:
-
-        $ cd poky
-        $ git checkout 221d864042658daa054281aab439b44d54fe94d7
-
-3. Get meta-sunxi layer:
-
-        $ git clone https://github.com/linux-sunxi/meta-sunxi.git
-
-4. Copy 'meta-lotos' to 'poky' folder
-
-5. Setup build configuration:
+2. Setup build configuration:
 
         $ source oe-init-build-env build-folder
 
-    Where 'build-folder' is any folder where you want to start build.
+    Where *build-folder* is any folder where you want to start build.
 
-6. Edit 'conf/local.conf' in your build folder, line 37:
+3. Edit *conf/local.conf* in your build folder, line 37:
 
-        MACHINE ??= "bananapi-lotos"
+        MACHINE ??= "bpi-lotos"
 
-7. Edit 'conf/bblayers.conf' in your build folder and add overlays, line 8:
+4. Edit *conf/bblayers.conf* in your build folder and add overlays, line 8:
 
         BBLAYERS ?= " \
             /opt/dev/yocto/poky/meta \
@@ -87,10 +102,10 @@ To build LotOS framework for Banana Pi, the following steps has to be done:
         /opt/dev/yocto/poky/meta-sunxi \
         /opt/dev/yocto/poky/meta-lotos \
 
-    NOTE: replace '/opt/dev/yocto' by the path to your poky tree.
+    NOTE: replace */opt/dev/yocto* by the path to your poky tree.
 
-8. Start build
+5. Start build
 
-      $ bitbake core-image-sato
+      $ bitbake core-image-lotos
 
-    The ready SD card image can be found in tmp/deploy/images/bananapi-lotos/*.sunxi-sdimg
+    The ready SD card image can be found in tmp/deploy/images/bpi-lotos/*.bpi-sdimg
