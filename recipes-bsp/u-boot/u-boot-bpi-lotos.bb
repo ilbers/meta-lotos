@@ -14,6 +14,8 @@ UBOOT_ENV = "boot"
 
 DEPENDS = "mango freertos virtual/kernel sunxi-board-fex mango-utils"
 
+do_compile[deptask] = "do_deploy"
+
 PV = "v2016.03"
 
 LIC_FILES_CHKSUM = "file://Licenses/README;md5=a2c678cfd4a4d97135585cad908541c6"
