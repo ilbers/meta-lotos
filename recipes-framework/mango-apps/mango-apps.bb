@@ -11,6 +11,9 @@ LIC_FILES_CHKSUM = "file://Licenses/gpl-2.0.txt;md5=b234ee4d69f5fce4486a80fdaf4a
 
 PV = "v1.0"
 
+DEPENDS += "libx11"
+RDEPENDS_mango_apps += "libx11"
+
 SRC_URI = "\
     git://github.com/ilbers/mango-apps.git;protocol=git;branch=master \
     file://mango                                                      \
