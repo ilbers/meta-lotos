@@ -43,11 +43,15 @@ The following build targets are available:
 
    Console-based Linux image with typical set of tools installed.
 
- * core-image-lotos
+ * lotos-image-release
 
    Graphical Linux image with Qt support.
 
-In addition, all the image includes Mango hypervisor extensions.
+ * lotos-image-devel
+
+   The same as above, but with various devel/testing tools
+
+In addition, all the images include Mango hypervisor extensions.
 
 Supported Boards
 ================
@@ -106,6 +110,6 @@ To build LotOS framework for Banana Pi, the following steps has to be done:
 
 5. Start build
 
-      $ bitbake core-image-lotos
+      $ bitbake lotos-image-release
 
     The ready SD card image can be found in tmp/deploy/images/bpi-lotos/*.bpi-sdimg
