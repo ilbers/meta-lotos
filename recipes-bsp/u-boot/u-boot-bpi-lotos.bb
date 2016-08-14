@@ -20,7 +20,7 @@ PV = "v2016.03"
 
 LIC_FILES_CHKSUM = "file://Licenses/README;md5=a2c678cfd4a4d97135585cad908541c6"
 SRC_URI = "\
-    git://git.denx.de/u-boot.git;protocol=http;tag=${PV}      \
+    git://github.com/ilbers/u-boot.git;tag=${PV}      \
     file://boot.cmd                             \
     file://lotos.its                            \
     file://0001-sunxi-boot-secondary-CPU.patch  \
